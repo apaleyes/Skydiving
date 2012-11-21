@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 
 g = 9.81 # m / s2
 initial_height = 39045.0 # m
-parachute_release_time = 4.0 * 60.0 + 20.0 # s
+parachute_release_start_time = 4.0 * 60.0 + 16.0 # s
+parachute_release_end_time = 4.0 * 60.0 + 20.0 # s
 end_time = 9.0 * 60.0 # s
 total_mass = 118 #kg
 c_d_man = 1.15 # unitless
@@ -61,7 +62,6 @@ def skydiving():
 
     c_d = c_d_man
     cross_area = cross_area_man
-    is_parachute_released = False
 
     x[0] = initial_height
     v[0] = 0.0
@@ -77,10 +77,11 @@ def skydiving():
         v[step + 1] = v[step] + (air_resistance / total_mass - g) * h
 
         current_time = h * step
-        if not is_parachute_released and parachute_release_time <= current_time:
-            is_parachute_released = True
-            c_d = c_d_parachute
-            cross_area = cross_area_parachute
+        if parachute_release_start_time <= current_time <= parachute_release_end_time:
+            parachute_opening_fraction = (current_time - parachute_release_start_time) / (parachute_release_end_time - parachute_release_start_time)
+
+            c_d = c_d_man + (c_d_parachute - c_d_man) * parachute_opening_fraction
+            cross_area = cross_area_man + (cross_area_parachute - cross_area_man) * parachute_opening_fraction
 
     return x, v
 
