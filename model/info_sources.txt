@@ -1,0 +1,10 @@
+Model uses range of physical constans and values. All of these numbers are taken from several links listed below.
+
+Temperatures/altitude: http://www.kansasflyer.org/index.asp?nav=Avi&sec=Alti&tab=Theory&pg=2
+Pressure/altitude: http://www.kansasflyer.org/index.asp?nav=Avi&sec=Alti&tab=Theory&pg=4
+Total mass: http://www.redbullstratos.com/the-mission/mission-timeline/
+Drag coefficient of man: http://en.wikipedia.org/wiki/Drag_coefficient#General
+Drag coefficient of parachute: http://www.bc.k12.pa.us/science_technology/Technology/3.6/Para%20Design%20is.htm
+Cross-sectional area of man: approximately calculated from http://people.math.gatech.edu/~weiss/pub/v2II.pdf and c_d_man
+Cross-sectional area of parachute: http://www.redbullstratos.com/technology/parachute/
+Air density, air molar mass: http://en.wikipedia.org/wiki/Density_of_air
