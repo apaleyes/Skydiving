@@ -8,3 +8,6 @@ Drag coefficient of parachute: http://www.bc.k12.pa.us/science_technology/Techno
 Cross-sectional area of man: approximately calculated from http://people.math.gatech.edu/~weiss/pub/v2II.pdf and c_d_man
 Cross-sectional area of parachute: http://www.redbullstratos.com/technology/parachute/
 Air density, air molar mass: http://en.wikipedia.org/wiki/Density_of_air
+Earth mass: http://en.wikipedia.org/wiki/Earth
+Earth radius: http://en.wikipedia.org/wiki/Earth_radius#Mean_radii
+Gravitational constant: http://en.wikipedia.org/wiki/Gravitational_constant

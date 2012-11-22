@@ -3,7 +3,10 @@ import numpy as np
 import numpy.linalg as la
 import matplotlib.pyplot as plt
 
-g = 9.81 # m / s2
+earth_mass = 5.9736e24 # kg
+earth_radius = 6371009 # m
+gravitational_constant = 6.67385e-11 # m3/(kg * s2)
+
 initial_height = 39045.0 # m
 parachute_release_start_time = 4.0 * 60.0 + 16.0 # s
 parachute_release_end_time = 4.0 * 60.0 + 20.0 # s
@@ -59,19 +62,24 @@ def air_density_by_altitude(altitude):
 def get_environment_conditions(altitude):
     return air_density_by_altitude(altitude), air_temperature_by_altitude(altitude), air_pressure_by_altitude(altitude)
     
+def get_gravitational_acceleration(altitude):
+    return gravitational_constant * earth_mass / (earth_radius + altitude)**2
+    
 def skydiving():
     x = np.zeros(num_steps + 1)
     v = np.zeros(num_steps + 1)
+    g = np.zeros(num_steps + 1)
     air_density_array = np.zeros(num_steps + 1)
     air_temperature_array = np.zeros(num_steps + 1)
-    air_pressure_array = np.zeros(num_steps + 1)
+    air_pressure_array = np.zeros(num_steps + 1)    
 
     c_d = c_d_man
     cross_area = cross_area_man
 
     x[0] = initial_height
     v[0] = 0.0
-    air_density_array[0], air_temperature_array[0], air_pressure_array[0] = get_environment_conditions(x[0])
+    g[0] = get_gravitational_acceleration(x[0])
+    air_density_array[0], air_temperature_array[0], air_pressure_array[0] = get_environment_conditions(x[0])    
 
     for step in xrange(num_steps):
         # Air density at current altitude
@@ -81,7 +89,8 @@ def skydiving():
         air_resistance = 0.5 * air_dens * c_d * cross_area * v[step] ** 2
 
         x[step + 1] = x[step] + v[step] * h
-        v[step + 1] = v[step] + (air_resistance / total_mass - g) * h
+        v[step + 1] = v[step] + (air_resistance / total_mass - g[step]) * h
+        g[step + 1] = get_gravitational_acceleration(x[step + 1])
 
         current_time = h * step
         if parachute_release_start_time <= current_time <= parachute_release_end_time:
@@ -92,34 +101,39 @@ def skydiving():
 
         air_density_array[step + 1], air_temperature_array[step + 1], air_pressure_array[step + 1] = get_environment_conditions(x[step + 1])
     
-    return x, v, air_density_array, air_temperature_array, air_pressure_array
+    return x, v, g, air_density_array, air_temperature_array, air_pressure_array
 
 def plot_graphs():
-    x, v, d, t, p = skydiving()
+    x, v, g, d, t, p = skydiving()
 
     plt.figure(1)
 
-    plt.subplot(511)
+    plt.subplot(611)
     plt.plot(times, x)
     plt.xlabel("Time, s")
     plt.ylabel("Altitude, m")
 
-    plt.subplot(512)
+    plt.subplot(612)
     plt.plot(times, v)
     plt.xlabel('Time, s')
     plt.ylabel("Velocity, m/s")
+    
+    plt.subplot(613)
+    plt.plot(times, g)
+    plt.xlabel('Time, s')
+    plt.ylabel("Acceleration, m/s2")
 
-    plt.subplot(513)
+    plt.subplot(614)
     plt.plot(times, d)
     plt.xlabel('Time, s')
     plt.ylabel("Air density, kg/m3")
     
-    plt.subplot(514)
+    plt.subplot(615)
     plt.plot(times, t)
     plt.xlabel('Time, s')
     plt.ylabel("Air temperature, K")
     
-    plt.subplot(515)
+    plt.subplot(616)
     plt.plot(times, p)
     plt.xlabel('Time, s')
     plt.ylabel("Air pressure, m/s")
