@@ -28,11 +28,11 @@ h = 0.1 # s
 num_steps = int(end_time / h)
 times = h * np.array(range(num_steps + 1))
 
-def air_temperature(altitude):
+def air_temperature_by_altitude(altitude):
     ''' Returns the air temperature at given altitude '''
     return get_approximation_value(altitude, temp_alt)
 
-def air_pressure(altitude):
+def air_pressure_by_altitude(altitude):
     ''' Returns the air pressure at given altitude '''
     return get_approximation_value(altitude, pres_alt)
 
@@ -52,19 +52,26 @@ def air_density(temperature, pressure):
 
 def air_density_by_altitude(altitude):
     ''' Returns the air density at given altitude '''
-    temperature = air_temperature(altitude)
-    pressure = air_pressure(altitude)
+    temperature = air_temperature_by_altitude(altitude)
+    pressure = air_pressure_by_altitude(altitude)
     return air_density(temperature, pressure)
 
+def get_environment_conditions(altitude):
+    return air_density_by_altitude(altitude), air_temperature_by_altitude(altitude), air_pressure_by_altitude(altitude)
+    
 def skydiving():
     x = np.zeros(num_steps + 1)
     v = np.zeros(num_steps + 1)
+    air_density_array = np.zeros(num_steps + 1)
+    air_temperature_array = np.zeros(num_steps + 1)
+    air_pressure_array = np.zeros(num_steps + 1)
 
     c_d = c_d_man
     cross_area = cross_area_man
 
     x[0] = initial_height
     v[0] = 0.0
+    air_density_array[0], air_temperature_array[0], air_pressure_array[0] = get_environment_conditions(x[0])
 
     for step in xrange(num_steps):
         # Air density at current altitude
@@ -83,22 +90,39 @@ def skydiving():
             c_d = c_d_man + (c_d_parachute - c_d_man) * parachute_opening_fraction
             cross_area = cross_area_man + (cross_area_parachute - cross_area_man) * parachute_opening_fraction
 
-    return x, v
+        air_density_array[step + 1], air_temperature_array[step + 1], air_pressure_array[step + 1] = get_environment_conditions(x[step + 1])
+    
+    return x, v, air_density_array, air_temperature_array, air_pressure_array
 
 def plot_graphs():
-    x, v = skydiving()
+    x, v, d, t, p = skydiving()
 
     plt.figure(1)
 
-    plt.subplot(211)
+    plt.subplot(511)
     plt.plot(times, x)
     plt.xlabel("Time, s")
     plt.ylabel("Altitude, m")
 
-    plt.subplot(212)
+    plt.subplot(512)
     plt.plot(times, v)
     plt.xlabel('Time, s')
     plt.ylabel("Velocity, m/s")
+
+    plt.subplot(513)
+    plt.plot(times, d)
+    plt.xlabel('Time, s')
+    plt.ylabel("Air density, kg/m3")
+    
+    plt.subplot(514)
+    plt.plot(times, t)
+    plt.xlabel('Time, s')
+    plt.ylabel("Air temperature, K")
+    
+    plt.subplot(515)
+    plt.plot(times, p)
+    plt.xlabel('Time, s')
+    plt.ylabel("Air pressure, m/s")
 
     plt.show()
 
