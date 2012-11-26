@@ -140,4 +140,5 @@ def plot_graphs():
 
     plt.show()
 
-plot_graphs()
+if __name__ == '__main__':
+    plot_graphs()
